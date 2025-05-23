@@ -1,0 +1,214 @@
+basePath: /api/v1
+definitions:
+  domain.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  domain.ExtendAccessTokenRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  domain.LoginResponse:
+    properties:
+      token:
+        description: Changed from AccessToken and RefreshToken
+        type: string
+    type: object
+  domain.RevokeRefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  domain.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  domain.User:
+    properties:
+      avatar:
+        description: Added db tag
+        type: string
+      created_at:
+        type: string
+      email:
+        description: Added db tag
+        type: string
+      full_name:
+        description: Added db tag
+        type: string
+      id:
+        type: integer
+      is_deleted:
+        type: boolean
+      role:
+        description: Added db tag
+        type: string
+      slack_id:
+        description: Added db tag
+        type: string
+      token:
+        description: bson:"-" and db:"-" as it's not stored
+        type: string
+      updated_at:
+        type: string
+      username:
+        description: Updated json tag to "username"
+        type: string
+    type: object
+  domain.VerifyUsernameRequest:
+    properties:
+      username:
+        type: string
+    required:
+    - username
+    type: object
+  domain.VerifyUsernameResponse:
+    properties:
+      available:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server for a debt helper application.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Debt Helper API
+  version: "1.0"
+paths:
+  /login/access-token/extend:
+    post:
+      consumes:
+      - application/json
+      description: Extends the validity of an existing access token.
+      parameters:
+      - description: Extend Access Token Request
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ExtendAccessTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Extend access token
+      tags:
+      - login
+  /login/refresh-token/revoke:
+    post:
+      consumes:
+      - application/json
+      description: Revokes an existing refresh token.
+      parameters:
+      - description: Revoke Refresh Token Request
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RevokeRefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Revoke refresh token
+      tags:
+      - login
+  /login/verify-username:
+    post:
+      consumes:
+      - application/json
+      description: Verifies if a username is available.
+      parameters:
+      - description: Verify Username Request
+        in: body
+        name: username
+        required: true
+        schema:
+          $ref: '#/definitions/domain.VerifyUsernameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.VerifyUsernameResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Verify username
+      tags:
+      - login
+  /me:
+    get:
+      consumes:
+      - application/json
+      description: Get user details for the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "401":
+          description: User ID not found in token
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: User ID in token is not in expected format
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Fetch authenticated user's information
+      tags:
+      - users
+swagger: "2.0"

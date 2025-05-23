@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	domain "github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
+	domain "github.com/kien-vu-uet/debt-helper-go/domain"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -73,18 +73,18 @@ func (_m *UserRepository) GetByEmail(c context.Context, email string) (domain.Us
 }
 
 // GetByID provides a mock function with given fields: c, id
-func (_m *UserRepository) GetByID(c context.Context, id string) (domain.User, error) {
+func (_m *UserRepository) GetByID(c context.Context, id int64) (domain.User, error) {
 	ret := _m.Called(c, id)
 
 	var r0 domain.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) domain.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int64) domain.User); ok {
 		r0 = rf(c, id)
 	} else {
 		r0 = ret.Get(0).(domain.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
 		r1 = rf(c, id)
 	} else {
 		r1 = ret.Error(1)

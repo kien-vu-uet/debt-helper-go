@@ -12,9 +12,12 @@ type Env struct {
 	ContextTimeout         int    `mapstructure:"CONTEXT_TIMEOUT"`
 	DBHost                 string `mapstructure:"DB_HOST"`
 	DBPort                 string `mapstructure:"DB_PORT"`
-	DBUser                 string `mapstructure:"DB_USER"`
-	DBPass                 string `mapstructure:"DB_PASS"`
+	DBUser                 string `mapstructure:"DB_USERNAME"`
+	DBPass                 string `mapstructure:"DB_PASSWORD"`
 	DBName                 string `mapstructure:"DB_NAME"`
+	DBMaxOpenConns         int    `mapstructure:"DB_MAX_OPEN_CONNS"`
+	DBMaxIdleConns         int    `mapstructure:"DB_MAX_IDLE_CONNS"`
+	DBConnMaxLifetime      int    `mapstructure:"DB_CONN_MAX_LIFETIME"`
 	AccessTokenExpiryHour  int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
 	RefreshTokenExpiryHour int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
 	AccessTokenSecret      string `mapstructure:"ACCESS_TOKEN_SECRET"`

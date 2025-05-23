@@ -1,56 +1,56 @@
 package bootstrap
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"time"
 
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/mongo"
+	"gorm.io/driver/mysql" // GORM MySQL driver
+	"gorm.io/gorm"         // GORM library
 )
 
-func NewMongoDatabase(env *Env) mongo.Client {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+// NewMySQLDatabase creates a new GORM database connection
+func NewMySQLDatabase(env *Env) *gorm.DB { // Changed return type to *gorm.DB
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		env.DBUser, env.DBPass, env.DBHost, env.DBPort, env.DBName)
+	
+	log.Printf("Connecting to MySQL database with DSN: %s", dsn)
 
-	dbHost := env.DBHost
-	dbPort := env.DBPort
-	dbUser := env.DBUser
-	dbPass := env.DBPass
-
-	mongodbURI := fmt.Sprintf("mongodb://%s:%s@%s:%s", dbUser, dbPass, dbHost, dbPort)
-
-	if dbUser == "" || dbPass == "" {
-		mongodbURI = fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
-	}
-
-	client, err := mongo.NewClient(mongodbURI)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error opening database with GORM: %v", err)
 	}
 
-	err = client.Connect(ctx)
+	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error getting underlying sql.DB from GORM: %v", err)
 	}
 
-	err = client.Ping(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Configure connection pool
+	sqlDB.SetMaxOpenConns(env.DBMaxOpenConns)
+	sqlDB.SetMaxIdleConns(env.DBMaxIdleConns)
+	sqlDB.SetConnMaxLifetime(time.Duration(env.DBConnMaxLifetime) * time.Minute)
 
-	return client
+	// GORM's Open function already pings the database, so explicit PingContext might be redundant
+	// However, keeping a check here or relying on GORM's error handling during Open is fine.
+	log.Println("Successfully connected to MySQL database using GORM.")
+	return db
 }
 
-func CloseMongoDBConnection(client mongo.Client) {
-	if client == nil {
+// CloseMySQLConnection closes the GORM database connection
+func CloseMySQLConnection(db *gorm.DB) { // Changed parameter type to *gorm.DB
+	if db == nil {
 		return
 	}
-
-	err := client.Disconnect(context.TODO())
+	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error getting underlying sql.DB from GORM for closing: %v", err)
+		return
 	}
-
-	log.Println("Connection to MongoDB closed.")
+	err = sqlDB.Close()
+	if err != nil {
+		log.Printf("Error closing MySQL database connection via GORM: %v", err)
+	} else {
+		log.Println("Connection to MySQL closed via GORM.")
+	}
 }

@@ -3,16 +3,23 @@ package controller
 import (
 	"net/http"
 
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/bootstrap"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/kien-vu-uet/debt-helper-go/bootstrap"
+	"github.com/kien-vu-uet/debt-helper-go/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type SignupController struct {
 	SignupUsecase domain.SignupUsecase
 	Env           *bootstrap.Env
+}
+
+// NewSignupController creates a new SignupController
+func NewSignupController(signupUsecase domain.SignupUsecase, env *bootstrap.Env) *SignupController {
+	return &SignupController{
+		SignupUsecase: signupUsecase,
+		Env:           env,
+	}
 }
 
 func (sc *SignupController) Signup(c *gin.Context) {
@@ -42,8 +49,7 @@ func (sc *SignupController) Signup(c *gin.Context) {
 	request.Password = string(encryptedPassword)
 
 	user := domain.User{
-		ID:       primitive.NewObjectID(),
-		Name:     request.Name,
+		Username: request.Username, // Changed from Name to Username
 		Email:    request.Email,
 		Password: request.Password,
 	}

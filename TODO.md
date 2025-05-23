@@ -34,29 +34,29 @@ This document outlines a comprehensive TODO list for the "Debt Helper" backend p
     - [x] Create Dockerfile and docker-compose.yaml for local database (MySQL/Postgres) and Redis.
     - [x] Configure internal/config with viper for environment variable loading.
     - [x] Set up internal/infrastructure/logger (e.g., Zap/Logrus).
-- [x] Database Setup & Migrations:
+- [ ] Database Setup & Migrations:
     - [x] Implement database connection pooling (internal/infrastructure/database/mysql.go or postgres.go).
     - [x] Create initial migration scripts (db/migrations/) for users table.
     - [x] Integrate golang-migrate or goose for migration management.
-- [x] User Domain & Repository:
+- [ ] User Domain & Repository:
     - [x] Define User entity in internal/domain/user.go.
     - [x] Define UserRepository interface in internal/domain/user.go.
     - [x] Implement MySQLUserRepository (or PostgresUserRepository) in internal/adapter/repository/mysql/user_repository.go.
-- [x] User Use Cases:
-    - [x] Implement RegisterUser use case in internal/usecase/user/service.go (including password hashing with bcrypt).
-    - [x] Implement AuthenticateUser use case in internal/usecase/user/service.go.
-    - [x] Implement GetUserByID use case.
+- [ ] User Use Cases:
+    - [ ] Implement RegisterUser use case in internal/usecase/user/service.go (including password hashing with bcrypt).
+    - [ ] Implement AuthenticateUser use case in internal/usecase/user/service.go.
+    - [ ] Implement GetUserByID use case.
 - [ ] Authentication & Authorization:
-    - [x] Implement JWT token generation and validation (internal/adapter/auth/jwt_manager.go).
-    - [x] Create authentication middleware (internal/adapter/auth/middleware.go) for protected routes.
-- [x] HTTP API & Handlers:
-    - [x] Set up Gin/Fiber framework (cmd/api/main.go).
-    - [x] Define basic HTTP routes (internal/adapter/http/routes.go).
-    - [x] Implement UserHandler (internal/adapter/http/user_handler.go) for registration, login, and profile retrieval.
-    - [x] Integrate go-playground/validator for input validation.
-- [x] Initial Testing:
-    - [x] Write unit tests for user domain, usecase, and repository layers.
-    - [x] Write integration tests for user registration and login API endpoints.
+    - [ ] Implement JWT token generation and validation (internal/adapter/auth/jwt_manager.go).
+    - [ ] Create authentication middleware (internal/adapter/auth/middleware.go) for protected routes.
+- [ ] HTTP API & Handlers:
+    - [ ] Set up Gin/Fiber framework (cmd/api/main.go).
+    - [ ] Define basic HTTP routes (internal/adapter/http/routes.go).
+    - [ ] Implement UserHandler (internal/adapter/http/user_handler.go) for registration, login, and profile retrieval.
+    - [ ] Integrate go-playground/validator for input validation.
+- [ ] Initial Testing:
+    - [ ] Write unit tests for user domain, usecase, and repository layers.
+    - [ ] Write integration tests for user registration and login API endpoints.
 
 **Milestone 1**: Basic User Authentication & Profile Management API Ready. Users can register, log in, and retrieve their own profile information. (Achieved on 2025-05-23)
 

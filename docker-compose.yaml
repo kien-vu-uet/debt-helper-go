@@ -6,20 +6,27 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8338:8080"
+      - "8338:8000" # Expose app on host port 8338, internal 8000
     environment:
-      DB_HOST: ${DB_HOST:-mysql}
-      DB_PORT: 3306 # Changed to 3306 for MySQL
-      DB_USER: root
-      DB_PASSWORD: ${SECRET_KEY?Variable SECRET_KEY is no set}
-      DB_NAME: debt_helper
-      REDIS_HOST: ${REDIS_HOST:-redis}
-      REDIS_PORT: 6379
-      GIN_MODE: ${GIN_MODE:-release}
-      # Add other environment variables your app needs
+      DB_DRIVER: mysql
+      DB_HOST: mysql # Service name of the MySQL container
+      DB_PORT: 3306
+      DB_USERNAME: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD?Variable DB_PASSWORD is not set}
+      DB_NAME: ${DB_NAME:-debt_helper}
+      GIN_MODE: ${GIN_MODE:-debug}
+      CONTEXT_TIMEOUT: ${CONTEXT_TIMEOUT:-2}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET?Variable ACCESS_TOKEN_SECRET is not set}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET?Variable REFRESH_TOKEN_SECRET is not set}
+      ACCESS_TOKEN_EXPIRY_HOUR: ${ACCESS_TOKEN_EXPIRY_HOUR:-2}
+      REFRESH_TOKEN_EXPIRY_HOUR: ${REFRESH_TOKEN_EXPIRY_HOUR:-168}
+      SERVER_ADDRESS: ${SERVER_ADDRESS:-:8000}
     networks:
       - debt_helper_network
 
 networks:
   debt_helper_network:
     driver: bridge
+
+volumes:
+  mysql_data: # Persists MySQL data

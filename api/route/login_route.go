@@ -3,20 +3,23 @@ package route
 import (
 	"time"
 
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/api/controller"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/bootstrap"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/mongo"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/repository"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/usecase"
 	"github.com/gin-gonic/gin"
+	"github.com/kien-vu-uet/debt-helper-go/api/controller"
+	"github.com/kien-vu-uet/debt-helper-go/bootstrap"
+	"github.com/kien-vu-uet/debt-helper-go/domain"
+	"github.com/kien-vu-uet/debt-helper-go/repository"
+	"github.com/kien-vu-uet/debt-helper-go/usecase"
+	"gorm.io/gorm"
 )
 
-func NewLoginRouter(env *bootstrap.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
+func NewLoginRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, group *gin.RouterGroup) {
 	ur := repository.NewUserRepository(db, domain.CollectionUser)
 	lc := &controller.LoginController{
 		LoginUsecase: usecase.NewLoginUsecase(ur, timeout),
 		Env:          env,
 	}
-	group.POST("/login", lc.Login)
+	group.POST("/login/access-token", lc.Login) // Changed from /login to /login/access-token
+	group.POST("/login/access-token/extend", lc.ExtendAccessToken)
+	group.POST("/login/refresh-token/revoke", lc.RevokeRefreshToken)
+	group.POST("/login/verify-username", lc.VerifyUsername)
 }

@@ -1,19 +1,23 @@
 package bootstrap
 
-import "github.com/amitshekhariitbhu/go-backend-clean-architecture/mongo"
+import (
+	"gorm.io/gorm"
+)
 
 type Application struct {
-	Env   *Env
-	Mongo mongo.Client
+	Env    *Env
+	DB     *gorm.DB // Changed to *gorm.DB
+	Logger *Logger  // Add Logger field
 }
 
 func App() Application {
 	app := &Application{}
 	app.Env = NewEnv()
-	app.Mongo = NewMongoDatabase(app.Env)
+	app.Logger = NewLogger() // Initialize Logger
+	app.DB = NewMySQLDatabase(app.Env)
 	return *app
 }
 
 func (app *Application) CloseDBConnection() {
-	CloseMongoDBConnection(app.Mongo)
+	CloseMySQLConnection(app.DB)
 }
